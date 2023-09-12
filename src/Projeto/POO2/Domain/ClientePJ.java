@@ -1,13 +1,13 @@
 package Projeto.POO2.Domain;
 
-public class ClientePJ {
+public class ClientePJ extends Cliente {
     private String cnpj;
     private String nome;
     private int idade;
 
-    public ClientePJ(String cpf, String nome, int idade) {
-        this.cnpj = cpf;
-        this.nome = nome;
+    public ClientePJ(String cnpj, String nome, int idade) {
+        super(nome);
+        this.cnpj = cnpj;
         this.idade = idade;
     }
 
@@ -19,19 +19,6 @@ public class ClientePJ {
         this.cnpj = cnpj;
     }
 
-    public String getNome() {
-        return nome;
-    }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
-    public int getIdade() {
-        return idade;
-    }
-
-    public void setIdade(int idade) {
-        this.idade = idade;
-    }
 }
