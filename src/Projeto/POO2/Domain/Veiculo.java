@@ -1,25 +1,25 @@
 package Projeto.POO2.Domain;
 
 public class Veiculo {
-    private Integer plate;
+    private String plate;
     private String type;
     private String model;
     private boolean disponivel;
     private int ano;
 
-    public Veiculo(Integer plate, String type, String model, boolean disponivel, int ano) {
+    public Veiculo(String plate, String type, String model, int ano) {
         this.plate = plate;
         this.type = type;
         this.model = model;
-        this.disponivel = disponivel;
+        this.disponivel = true;
         this.ano = ano;
     }
 
-    public Integer getPlate() {
+    public String getPlate() {
         return plate;
     }
 
-    public void setPlate(Integer plate) {
+    public void setPlate(String plate) {
         this.plate = plate;
     }
 
@@ -53,5 +53,8 @@ public class Veiculo {
 
     public void setAno(int ano) {
         this.ano = ano;
+    }
+    public String toString(){
+        return "Placa: "+plate+" Tipo:"+type+" Modelo: "+ model + " Ano:"+ano+"\n";
     }
 }
