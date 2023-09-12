@@ -7,4 +7,5 @@ public interface Repository {
     public void add(Object entrada);
     public Object find(String entrada);
 
+
 }
