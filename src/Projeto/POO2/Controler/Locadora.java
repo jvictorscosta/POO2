@@ -1,14 +1,13 @@
 package Projeto.POO2.Controler;
 
-import Projeto.POO2.Repository.ClientePfRepository;
-import Projeto.POO2.Repository.ClientePjrepository;
-import Projeto.POO2.Repository.VeiculoRepository;
-import Projeto.POO2.Service.ClienteService;
-import Projeto.POO2.Service.VeiculoService;
-
-import java.sql.SQLOutput;
+import Projeto.POO2.Domain.Cliente;
+import Projeto.POO2.Domain.Veiculo;
+import Projeto.POO2.Repository.*;
+import Projeto.POO2.Service.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
-
 public class Locadora {
     Scanner scanner = new Scanner(System.in);
     VeiculoRepository veiculoRepository=new VeiculoRepository();
@@ -16,6 +15,8 @@ public class Locadora {
     ClientePfRepository clientePfRepository=new ClientePfRepository();
     VeiculoService veiculoService = new VeiculoService(veiculoRepository);
     ClienteService clienteService = new ClienteService(clientePfRepository,clientePjrepository);
+    AluguelRepository aluguelRepository=new AluguelRepository();
+    AluguelService aluguelService=new AluguelService(aluguelRepository);
 
     public void execute() {
         //TESTE
@@ -94,10 +95,50 @@ public class Locadora {
 
 
     private void devolverVeiculo() {
+        scanner.nextLine();
+        System.out.println("RETORNANDO VEICULO");
+        System.out.println("Digite qual Cliente está retornando um Veiculo.");
+        String clienteDevolvendo= scanner.nextLine();
+        Cliente cliente =clienteService.find(clienteDevolvendo);
+
+
     }
 
     private void alugarVeiculo() {
-
+        scanner.nextLine();
+        System.out.println("ALUGANDO VEICULO");
+        System.out.println("Qual cliente está alugando veiculo?");
+        String clienteProcurado= scanner.nextLine();
+        Cliente cliente = clienteService.find(clienteProcurado);
+        System.out.println("Qual modelo de veiculo está procurando");
+        String tipo=escolherTipo();
+        System.out.println("Qual dos modelos abaixo está procurando? ");
+        System.out.println(veiculoService.findModelo(tipo).toString());
+        scanner.nextLine();
+        System.out.println("Digite a placa do veiculo escolhido:");
+        String placaEscolhida=scanner.nextLine();
+        Veiculo veiculo = (Veiculo) veiculoService.find(placaEscolhida);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        boolean isParsingSuccess = false;
+        LocalDateTime dataRetirada = null;
+        while (!isParsingSuccess) {
+            try {
+                System.out.println("Digite a data de retirada do veiculo no formato dd/mm/aaaa HH:mm:");
+                String dataEntrada = this.scanner.nextLine();
+                dataRetirada = LocalDateTime.parse(dataEntrada, formatter);
+                isParsingSuccess = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Data inválida. O formato aceito é dd/mm/aaaa hh:mm, por exemplo 15/05/1997 12:00.");
+            }
+        }
+        System.out.println("Por quantos dias pretende ficar com o veiculo?");
+        int diasPretendidos=scanner.nextInt();
+        LocalDateTime dataDevolucaoPretendida=dataRetirada.plusDays(diasPretendidos);
+        System.out.println("Retirada será no dia "+dataDevolucaoPretendida);
+        scanner.nextLine();
+        System.out.println("De qual Cidade o local está sendo Alugado? ");
+        String localAlugado=scanner.nextLine();
+        System.out.println(aluguelService.createAluguel(cliente,veiculo,dataRetirada,dataDevolucaoPretendida,localAlugado).toString());
     }
 
     private void alterarCliente() {
@@ -131,13 +172,25 @@ public class Locadora {
         System.out.println("-CADASTRANDO VEICULO.");
         System.out.println("Qual placa do veiculo deseja cadastrar?");
         String plate = scanner.nextLine();
-        System.out.println("Qual o tipo do veiculo a ser cadastrado? 1-PEQUENO, 2-MÉDIO ou 3-SUV?");
-        System.out.println("Digite o número.");
+        System.out.println("Qual o tipo do veiculo a ser cadastrado? ");
+        String type=escolherTipo();
+        System.out.println("Qual modelo do veiculo?");
+        String model = scanner.nextLine();
+        System.out.println("Qual ano foi fabricado o veiculo");
+        int ano= scanner.nextInt();
+        veiculoService.create(plate,type,model,ano);
+
+    }
+
+    private String escolherTipo(){
+
+        System.out.println("Digite o número para um modelo.");
+        System.out.println("1-PEQUENO, 2-MÉDIO ou 3-SUV?");
         int option = scanner.nextInt();
         String type;
         switch (option){
             case 1->{
-               type="PEQUENO";
+                type="PEQUENO";
             }
             case 2->{
                 type="MÉDIO";
@@ -149,12 +202,7 @@ public class Locadora {
                 throw new RuntimeException("Opção invalida.");
             }
         }
-        System.out.println("Qual modelo do veiculo?");
-        String model = scanner.nextLine();
-        System.out.println("Qual ano foi fabricado o veiculo");
-        int ano= scanner.nextInt();
-        veiculoService.create(plate,type,model,ano);
-
+        return type;
     }
     private void cadastrarCliente(){
         int option;

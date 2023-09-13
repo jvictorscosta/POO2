@@ -34,24 +34,25 @@ public class VeiculoRepository extends ARepository implements Repository{
     }
 
     @Override
-    public List<Veiculo> find(String entradaPlaca) {
+    public Veiculo find(String entradaPlaca) {
         List<Veiculo> veiculosEncontrados = new ArrayList<>();
         for(Object obj : this.list){
             if(obj instanceof Veiculo){
                 Veiculo veiculo =(Veiculo) obj;
-                if(veiculo.getPlate().equalsIgnoreCase(entradaPlaca)){
+                if(veiculo.getPlate().contains(entradaPlaca)){
                     veiculosEncontrados.add((Veiculo) obj);
+                    return veiculo;
                 }
             }
         }
-        return veiculosEncontrados;
+        return null;
     }
     public List<Veiculo> findModelo(String entradaTypo) {
         List<Veiculo> veiculosEncontrados = new ArrayList<>();
         for(Object obj : this.list){
             if(obj instanceof Veiculo){
                 Veiculo veiculo =(Veiculo) obj;
-                if(veiculo.getType().contains(entradaTypo)){
+                if(veiculo.getType().equals(entradaTypo)){
                     veiculosEncontrados.add((Veiculo) obj);
                 }
             }

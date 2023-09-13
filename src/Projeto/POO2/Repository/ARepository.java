@@ -9,10 +9,6 @@ public abstract class ARepository {
     public ARepository() {
         this.list = new ArrayList<>();
     }
-
     public abstract void add(Object entrada);
-
-
     public abstract List<Object> getAll();
-
 }
