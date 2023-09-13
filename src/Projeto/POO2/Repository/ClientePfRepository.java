@@ -21,11 +21,6 @@ public class ClientePfRepository extends ARepository implements Repository {
     }
 
     @Override
-    public Object get(String index) {
-        return null;
-    }
-
-    @Override
     public Object find(String entrada) {
         return null;
     }

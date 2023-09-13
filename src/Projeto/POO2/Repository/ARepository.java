@@ -12,7 +12,6 @@ public abstract class ARepository {
 
     public abstract void add(Object entrada);
 
-    public abstract Object get(String index);
 
     public abstract List<Object> getAll();
 

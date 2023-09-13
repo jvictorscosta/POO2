@@ -20,7 +20,6 @@ public class VeiculoRepository extends ARepository implements Repository{
         list.add(entrada);
     }
 
-    @Override
     public Object get(String entrada) {
         for(Object obj : this.list){
             if(obj instanceof Veiculo){
