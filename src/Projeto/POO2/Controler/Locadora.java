@@ -198,18 +198,17 @@ public class Locadora {
         System.out.println("Qual modelo do veiculo?");
         String model = scanner.nextLine();
         boolean isParsingSuccess = false;
-
+        int ano=0;
         while (!isParsingSuccess) {
             try {
                 System.out.println("Qual ano foi fabricado o veiculo");
-                int ano= scanner.nextInt();
+                ano= scanner.nextInt();
                 isParsingSuccess = true;
-            } catch (InputMismatchException e) {
+            } catch (Exception e) {
                 System.out.println("Data inválida. favor digitar um inteiro.");
             }
         }
         System.out.println("Qual ano foi fabricado o veiculo");
-        int ano= scanner.nextInt();
         veiculoService.create(plate,type,model,ano);
 
     }
