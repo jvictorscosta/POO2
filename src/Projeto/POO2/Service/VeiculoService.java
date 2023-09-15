@@ -1,5 +1,6 @@
 package Projeto.POO2.Service;
 
+import Projeto.POO2.Domain.Veiculo;
 import Projeto.POO2.Repository.VeiculoRepository;
 
 import java.util.List;
@@ -31,5 +32,9 @@ public class VeiculoService implements Service{
     @Override
     public List listAll() {
         return veiculoRepository.getAll();
+    }
+
+    public void alternarDisp(Veiculo veiculo) {
+        veiculoRepository.alternarDisp(veiculo);
     }
 }

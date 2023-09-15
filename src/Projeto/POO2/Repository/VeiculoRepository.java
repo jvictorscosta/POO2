@@ -53,7 +53,9 @@ public class VeiculoRepository extends ARepository implements Repository{
             if(obj instanceof Veiculo){
                 Veiculo veiculo =(Veiculo) obj;
                 if(veiculo.getType().equals(entradaTypo)){
+                    if (veiculo.isDisponivel()==true){
                     veiculosEncontrados.add((Veiculo) obj);
+                    }
                 }
             }
         }
@@ -66,5 +68,13 @@ public class VeiculoRepository extends ARepository implements Repository{
     public Veiculo buscar(String plate){
 
         return null;
+    }
+
+    public void alternarDisp(Veiculo veiculo) {
+        if (veiculo.isDisponivel()==true) {
+            veiculo.setDisponivel(false);
+        }else {
+            veiculo.setDisponivel(true);
+        }
     }
 }

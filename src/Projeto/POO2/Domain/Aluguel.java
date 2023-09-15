@@ -1,6 +1,7 @@
 package Projeto.POO2.Domain;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class Aluguel {
@@ -84,6 +85,6 @@ public class Aluguel {
     }
 
     public String toString(){
-        return "Resgistro do aluguel: "+id+" -cliente "+cliente.getNome()+" retirou veículo de placa: "+ veiculo.getPlate()+ " dia "+dataSaida +"\n Local: "+localAlugado;
+        return "Resgistro do aluguel: "+id+" -cliente "+cliente.getNome()+" retirou veículo de placa: "+ veiculo.getPlate()+ " dia "+dataSaida.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) +"\n Local: "+localAlugado;
     }
 }

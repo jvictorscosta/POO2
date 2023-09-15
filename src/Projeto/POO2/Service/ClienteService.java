@@ -16,8 +16,8 @@ public class ClienteService implements Service{
         this.clientePfRepository= clientePfRepository;
         this.clientePjrepository= clientePjrepository;
     }
-    ClientePjrepository clientePjrepository ;
-    ClientePfRepository clientePfRepository ;
+    ClientePjrepository clientePjrepository;
+    ClientePfRepository clientePfRepository;
     public void createPf(String cpf, String nome, int idade){
         clientePfRepository.create(cpf,nome,idade);
     }

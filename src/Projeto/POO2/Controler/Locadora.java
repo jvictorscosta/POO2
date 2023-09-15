@@ -7,6 +7,7 @@ import Projeto.POO2.Service.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 public class Locadora {
     Scanner scanner = new Scanner(System.in);
@@ -19,15 +20,6 @@ public class Locadora {
     AluguelService aluguelService=new AluguelService(aluguelRepository);
 
     public void execute() {
-        //TESTE
-        clienteService.createPj("0772323","joao",12);
-        clienteService.createPf("123123","Maria",15);
-        clienteService.createPf("321321","Fernando",23);
-        veiculoService.create("Pudim","SUV","Fiat uno",1999);
-        veiculoService.create("PudimPodre","PEQUENO","Fiat Sandero",1979);
-        veiculoService.create("PuDPASm","SUV","Fiat uno",1991);
-        veiculoService.create("asd","SUV","Gol",1994);
-        //teste-fim
 
         System.out.println("Bem vindo(a), a locadora ADA.JAVA");
         boolean sair=false;
@@ -37,8 +29,6 @@ public class Locadora {
                 menuChoice(option);
             }while(sair==false);
         }
-
-
     private int showMenu(){
         System.out.println();
         System.out.println("---Por favor, selecione uma das opções abaixo: ");
@@ -84,26 +74,41 @@ public class Locadora {
             default -> throw new IllegalStateException("Unexpected value: " + option);
         }
     }
-
     private void buscarVeiculoModelo() {
         scanner.nextLine();
         System.out.print("Favor fornecer modelo do veiculo procurado:");
         String modeloProcurado= scanner.nextLine();
         System.out.println(veiculoService.findModelo(modeloProcurado).toString());
-
     }
-
-
     private void devolverVeiculo() {
         scanner.nextLine();
+        System.out.println();
         System.out.println("RETORNANDO VEICULO");
-        System.out.println("Digite qual Cliente está retornando um Veiculo.");
-        String clienteDevolvendo= scanner.nextLine();
-        Cliente cliente =clienteService.find(clienteDevolvendo);
+        System.out.println("Digite qual id do alguel para retorno do veiculo.");
+        String idDevolvendo= scanner.nextLine();
+        System.out.println("Qual a cidade do retorno?");
+        scanner.nextLine();
+        String localRetorno= scanner.nextLine();
+        aluguelService.find(idDevolvendo).setLovalRetorno(localRetorno);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        boolean isParsingSuccess = false;
+        LocalDateTime dataRetorno = null;
 
-
+        while (!isParsingSuccess) {
+            try {
+                System.out.println("Digite a data e hora de devolução do veiculo no formato dd/mm/aaaa HH:mm:");
+                String dataEntrada = this.scanner.nextLine();
+                dataRetorno = LocalDateTime.parse(dataEntrada, formatter);
+                isParsingSuccess = true;
+            } catch (DateTimeParseException e) {
+                System.out.println("Data inválida. O formato aceito é dd/mm/aaaa hh:mm, por exemplo 15/05/1997 12:00.");
+            }
+        }
+        aluguelService.find(idDevolvendo).setDataDevolucao(dataRetorno);
+        System.out.println("Veiculo ficou alugado por "+aluguelService.diasAlugados(idDevolvendo) + " dias");
+        System.out.printf("Valor total do aluguel é de %.2f",aluguelService.valorTotal(idDevolvendo));
+        veiculoService.alternarDisp(aluguelService.find(idDevolvendo).getVeiculo());
     }
-
     private void alugarVeiculo() {
         scanner.nextLine();
         System.out.println("ALUGANDO VEICULO");
@@ -118,6 +123,7 @@ public class Locadora {
         System.out.println("Digite a placa do veiculo escolhido:");
         String placaEscolhida=scanner.nextLine();
         Veiculo veiculo = (Veiculo) veiculoService.find(placaEscolhida);
+        veiculoService.alternarDisp(veiculo);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         boolean isParsingSuccess = false;
         LocalDateTime dataRetirada = null;
@@ -134,7 +140,7 @@ public class Locadora {
         System.out.println("Por quantos dias pretende ficar com o veiculo?");
         int diasPretendidos=scanner.nextInt();
         LocalDateTime dataDevolucaoPretendida=dataRetirada.plusDays(diasPretendidos);
-        System.out.println("Retirada será no dia "+dataDevolucaoPretendida);
+        System.out.println("Retirada será no dia "+dataDevolucaoPretendida.format(formatter));
         scanner.nextLine();
         System.out.println("De qual Cidade o local está sendo Alugado? ");
         String localAlugado=scanner.nextLine();
@@ -160,22 +166,48 @@ public class Locadora {
 
     private void alterarVeiculo() {
         scanner.nextLine();
+        System.out.println();
+        System.out.println("ALTERANDO VEICULO");
+        System.out.println("Listando todos os veiculos");
+        System.out.println(veiculoService.listAll());
         System.out.println("Favor fornecer Placa do veiculo a ser alterado: ");
         String inputPlaca = scanner.nextLine();
         System.out.println(veiculoService.find(inputPlaca).toString());
         veiculoService.listAll();
+
     }
 
     private void cadastrarVeiculo(){
         scanner.nextLine();
         System.out.println();
         System.out.println("-CADASTRANDO VEICULO.");
+        boolean placaIgual=false;
         System.out.println("Qual placa do veiculo deseja cadastrar?");
-        String plate = scanner.nextLine();
+        String plate="PLACA VAZIA";
+        while(!placaIgual ) {
+            plate = scanner.nextLine();
+            if(veiculoService.find(plate)==null){
+                placaIgual=true;
+            }else{
+                System.out.println("Placa repetida, tente outra:");
+            }
+        }
         System.out.println("Qual o tipo do veiculo a ser cadastrado? ");
         String type=escolherTipo();
+        scanner.nextLine();
         System.out.println("Qual modelo do veiculo?");
         String model = scanner.nextLine();
+        boolean isParsingSuccess = false;
+
+        while (!isParsingSuccess) {
+            try {
+                System.out.println("Qual ano foi fabricado o veiculo");
+                int ano= scanner.nextInt();
+                isParsingSuccess = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Data inválida. favor digitar um inteiro.");
+            }
+        }
         System.out.println("Qual ano foi fabricado o veiculo");
         int ano= scanner.nextInt();
         veiculoService.create(plate,type,model,ano);
@@ -216,7 +248,16 @@ public class Locadora {
                 System.out.println("cadastrando cliente pessoa juridica.");
                 System.out.println();
                 System.out.println("Digite o nome do cliente: ");
-                String nome = scanner.nextLine();
+                String nome = "NOME VAZIO";
+                boolean nomeIgual = false;
+                while(!nomeIgual ) {
+                    nome = scanner.nextLine();
+                    if(clienteService.find(nome)==null){
+                        nomeIgual=true;
+                    }else{
+                        System.out.println("Nome já cadastrado, tente outro:");
+                    }
+                }
                 System.out.println("Digite o CNPJ do cliente: ");
                 String cnpj = scanner.nextLine();
                 System.out.println("Digite a idade do cliente: ");
@@ -228,7 +269,16 @@ public class Locadora {
                 System.out.println("cadastrando cliente pessoa fisica.");
                 System.out.println();
                 System.out.println("Digite o nome do cliente: ");
-                String nome = scanner.nextLine();
+                String nome = "NOME VAZIO";
+                boolean nomeIgual = false;
+                while(!nomeIgual ) {
+                    nome = scanner.nextLine();
+                    if(clienteService.find(nome)==null){
+                        nomeIgual=true;
+                    }else{
+                        System.out.println("Nome já cadastrado, tente outro:");
+                    }
+                }
                 System.out.println("Digite o cpf do cliente: ");
                 String cpf = scanner.nextLine();
                 System.out.println("Digite a idade do cliente: ");
